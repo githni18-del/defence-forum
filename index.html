@@ -75,6 +75,11 @@ button:hover {
     margin-top: -5px;
     margin-bottom: 5px;
 }
+
+/* spacing for navigation buttons */
+.nav {
+    margin-top: 20px;
+}
 </style>
 </head>
 
@@ -103,18 +108,22 @@ button:hover {
 
 <button onclick="submitQ()">Submit Question</button>
 
+<!-- 🔥 NEW NAVIGATION BUTTONS -->
+<div class="nav">
+    <button onclick="goModerator()">🧑‍💼 Moderator Portal</button>
+    <button onclick="goAdmin()">🛡️ Admin Portal</button>
+</div>
+
 </div>
 
 <script>
 function submitQ(){
 
-    // always use getElementById (reliable)
     let nameVal = document.getElementById("name").value.trim();
     let emailVal = document.getElementById("email").value.trim();
     let phoneVal = document.getElementById("phone").value.trim();
     let questionVal = document.getElementById("question").value.trim();
 
-    // clear previous errors
     document.getElementById("nameError").innerText = "";
     document.getElementById("emailError").innerText = "";
     document.getElementById("phoneError").innerText = "";
@@ -122,7 +131,6 @@ function submitQ(){
 
     let valid = true;
 
-    // validation
     if(nameVal === ""){
         document.getElementById("nameError").innerText = "⚠ Full Name is required";
         valid = false;
@@ -143,7 +151,6 @@ function submitQ(){
         valid = false;
     }
 
-    // phone validation (numbers only)
     if(phoneVal !== "" && !/^\d+$/.test(phoneVal)){
         document.getElementById("phoneError").innerText = "⚠ Phone must contain numbers only";
         valid = false;
@@ -151,7 +158,6 @@ function submitQ(){
 
     if(!valid) return;
 
-    // save data
     let data = JSON.parse(localStorage.getItem("questions")) || [];
 
     let q = {
@@ -164,13 +170,20 @@ function submitQ(){
     data.push(q);
     localStorage.setItem("questions", JSON.stringify(data));
 
-    // clear form
     document.getElementById("name").value = "";
     document.getElementById("email").value = "";
     document.getElementById("phone").value = "";
     document.getElementById("question").value = "";
 
     alert("Question submitted successfully!");
+}
+
+function goModerator(){
+    window.open("moderator.html", "_blank");
+}
+
+function goAdmin(){
+    window.open("admin.html", "_blank");
 }
 </script>
 
