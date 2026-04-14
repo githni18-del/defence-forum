@@ -3,6 +3,9 @@
 <head>
 <title>DSA 2026 Q&A</title>
 
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
@@ -25,13 +28,7 @@ body {
 
 h1 {
     font-family: 'Orbitron', sans-serif;
-    font-size: 28px;
     color: #00ffe0;
-    text-shadow: 0 0 12px #00ffe0;
-}
-
-p {
-    color: #8892b0;
 }
 
 input, textarea, button {
@@ -40,8 +37,6 @@ input, textarea, button {
     margin: 10px;
     border-radius: 10px;
     border: none;
-    outline: none;
-    font-size: 14px;
 }
 
 input, textarea {
@@ -50,35 +45,12 @@ input, textarea {
     border: 1px solid #00ffe0;
 }
 
-textarea {
-    height: 120px;
-    resize: none;
-}
+textarea { height: 120px; }
 
 button {
     background: linear-gradient(135deg, #00ffe0, #0077ff);
-    color: black;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px #00ffe0;
-}
-
-/* error text */
-.error {
-    color: red;
-    font-size: 12px;
-    margin-top: -5px;
-    margin-bottom: 5px;
-}
-
-/* spacing for navigation buttons */
-.nav {
-    margin-top: 20px;
 }
 </style>
 </head>
@@ -87,95 +59,60 @@ button:hover {
 
 <div class="container">
 
-<h1>🛡️ Forum DSA 2026 Q&A</h1>
-<p>23 April 2026 (Morning Session)</p>
-<p>FSTP, UPNM</p>
-<p><i>AI & Cyber Security as the Vanguard of Digital Defence</i></p>
-
-<h2>Audience</h2>
+<h1>🛡️ DSA 2026 Q&A</h1>
 
 <input id="name" placeholder="Full Name">
-<div id="nameError" class="error"></div>
-
 <input id="email" placeholder="Email">
-<div id="emailError" class="error"></div>
-
 <input id="phone" placeholder="Phone">
-<div id="phoneError" class="error"></div>
-
 <textarea id="question" placeholder="Your Question"></textarea>
-<div id="questionError" class="error"></div>
 
 <button onclick="submitQ()">Submit Question</button>
 
-<!-- 🔥 NEW NAVIGATION BUTTONS -->
-<div class="nav">
-    <button onclick="goModerator()">🧑‍💼 Moderator Portal</button>
-    <button onclick="goAdmin()">🛡️ Admin Portal</button>
-</div>
+<br><br>
+
+<button onclick="goModerator()">🧑‍💼 Moderator</button>
+<button onclick="goAdmin()">🛡️ Admin</button>
 
 </div>
 
 <script>
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDVYsoLRzVrP67_7VJNcwyDuYHR6nfjROY",
+  authDomain: "dsa-qna-githni.firebaseapp.com",
+  projectId: "dsa-qna-githni",
+  databaseURL: "https://dsa-qna-githni-default-rtdb.firebaseio.com/",
+  storageBucket: "dsa-qna-githni.appspot.com",
+  messagingSenderId: "852345859398",
+  appId: "1:852345859398:web:1ec1b1db15aa70e92d4947"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// submit question (REAL TIME)
 function submitQ(){
 
-    let nameVal = document.getElementById("name").value.trim();
-    let emailVal = document.getElementById("email").value.trim();
-    let phoneVal = document.getElementById("phone").value.trim();
-    let questionVal = document.getElementById("question").value.trim();
+    let name = document.getElementById("name").value;
+    let email = document.getElementById("email").value;
+    let phone = document.getElementById("phone").value;
+    let question = document.getElementById("question").value;
 
-    document.getElementById("nameError").innerText = "";
-    document.getElementById("emailError").innerText = "";
-    document.getElementById("phoneError").innerText = "";
-    document.getElementById("questionError").innerText = "";
-
-    let valid = true;
-
-    if(nameVal === ""){
-        document.getElementById("nameError").innerText = "⚠ Full Name is required";
-        valid = false;
+    if(!name || !email || !phone || !question){
+        alert("Fill all fields");
+        return;
     }
 
-    if(emailVal === ""){
-        document.getElementById("emailError").innerText = "⚠ Email is required";
-        valid = false;
-    }
+    db.ref("questions").push({
+        name, email, phone, question
+    });
 
-    if(phoneVal === ""){
-        document.getElementById("phoneError").innerText = "⚠ Phone number is required";
-        valid = false;
-    }
-
-    if(questionVal === ""){
-        document.getElementById("questionError").innerText = "⚠ Question is required";
-        valid = false;
-    }
-
-    if(phoneVal !== "" && !/^\d+$/.test(phoneVal)){
-        document.getElementById("phoneError").innerText = "⚠ Phone must contain numbers only";
-        valid = false;
-    }
-
-    if(!valid) return;
-
-    let data = JSON.parse(localStorage.getItem("questions")) || [];
-
-    let q = {
-        name: nameVal,
-        email: emailVal,
-        phone: phoneVal,
-        question: questionVal
-    };
-
-    data.push(q);
-    localStorage.setItem("questions", JSON.stringify(data));
+    alert("Question sent LIVE!");
 
     document.getElementById("name").value = "";
     document.getElementById("email").value = "";
     document.getElementById("phone").value = "";
     document.getElementById("question").value = "";
-
-    alert("Question submitted successfully!");
 }
 
 function goModerator(){
