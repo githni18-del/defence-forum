@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script> 
+
 <title>Admin - DSA 2026</title>
 
 <style>
@@ -119,26 +123,46 @@ p {
 </div>
 
 <script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDVYsoLRzVrP67_7VJNcwyDuYHR6nfjROY",
+  authDomain: "dsa-qna-githni.firebaseapp.com",
+  databaseURL: "https://dsa-qna-githni-default-rtdb.firebaseio.com/",
+  projectId: "dsa-qna-githni"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// LIVE DISPLAY (NO REFRESH NEEDED)
+function showQ(){
+
+    db.ref("questions").on("value", (snapshot) => {
+        let data = snapshot.val();
+        let html = "";
+
+        for(let id in data){
+            html += `
+                <div class="question-box">
+                    ${data[id].question}
+                </div>
+            `;
+        }
+
+        document.getElementById("display").innerHTML = html;
+    });
+}
+
+// LOGIN
 function login(){
     if(document.getElementById("pass").value === "admin123"){
-        document.getElementById("screen").style.display="block";
+        document.getElementById("screen").style.display = "block";
         showQ();
-        setInterval(showQ, 2000);
     } else {
         alert("Wrong password");
     }
 }
 
-function showQ(){
-    let data = JSON.parse(localStorage.getItem("questions")) || [];
-    let html = "";
-
-    data.forEach(q=>{
-        html += `<div class="question-box">${q.question}</div>`;
-    });
-
-    document.getElementById("display").innerHTML = html;
-}
 </script>
 
 </body>
