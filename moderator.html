@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Moderator - DSA 2026</title>
+
+<style>
+body {
+    background: linear-gradient(135deg, #0a192f, #020c1b);
+    color: #e6f1ff;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Container */
+.container {
+    margin-top: 60px;
+    padding: 30px;
+}
+
+/* Title */
+h1 {
+    font-size: 32px;
+    color: #00ffe0;
+    text-shadow: 0 0 10px #00ffe0;
+}
+
+h2, h3 {
+    color: #64ffda;
+}
+
+/* Inputs & Buttons */
+input, button {
+    width: 260px;
+    padding: 12px;
+    margin: 10px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+/* Input */
+input {
+    background: rgba(255,255,255,0.05);
+    color: white;
+    border: 1px solid #00ffe0;
+}
+
+/* Button */
+button {
+    background: linear-gradient(135deg, #00ffe0, #0077ff);
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #00ffe0;
+}
+
+/* Panel */
+#panel {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0,255,224,0.2);
+}
+
+/* Question Card */
+.question-box {
+    width: 65%;
+    margin: 15px auto;
+    padding: 15px;
+    text-align: left;
+    border-radius: 10px;
+    background: rgba(0,255,224,0.05);
+    border-left: 4px solid #00ffe0;
+    box-shadow: 0 0 10px rgba(0,255,224,0.1);
+    transition: 0.3s;
+}
+
+.question-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(0,255,224,0.3);
+}
+
+/* Delete Button */
+.question-box button {
+    float: right;
+    width: auto;
+    padding: 6px 12px;
+    font-size: 12px;
+    background: #ff4d4d;
+    color: white;
+}
+
+.question-box button:hover {
+    background: red;
+    box-shadow: 0 0 10px red;
+}
+
+/* Text */
+p {
+    color: #8892b0;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>🛡️ Forum DSA 2026 Q&A</h1>
+<p>23 April 2026 (Morning Session)</p>
+<p>FSTP, UPNM</p>
+<p><i>AI & Cyber Security as the Vanguard of Digital Defence</i></p>
+
+<h2>Moderator</h2>
+
+<div id="login">
+<input type="password" id="pass" placeholder="Enter Password">
+<button onclick="login()">Login</button>
+</div>
+
+<div id="panel" style="display:none;">
+    <h3>Question List</h3>
+    <div id="list"></div>
+</div>
+
+</div>
+
+<script>
+function login(){
+    if(document.getElementById("pass").value === "123"){
+        document.getElementById("panel").style.display="block";
+        loadQ();
+        setInterval(loadQ, 2000); // 🔥 LIVE UPDATE FIX
+    } else {
+        alert("Wrong password");
+    }
+}
+
+function loadQ(){
+    let data = JSON.parse(localStorage.getItem("questions")) || [];
+    let html = "";
+
+    data.forEach((q,i)=>{
+        html += `
+        <div class="question-box">
+            <b>Name:</b> ${q.name}<br>
+            <b>Email:</b> ${q.email}<br>
+            <b>Phone:</b> ${q.phone}<br><br>
+            <b>Question:</b><br>
+            ${q.question}
+            <button onclick="del(${i})">Delete</button>
+        </div>`;
+    });
+
+    document.getElementById("list").innerHTML = html;
+}
+
+function del(i){
+    let data = JSON.parse(localStorage.getItem("questions"));
+    data.splice(i,1);
+    localStorage.setItem("questions", JSON.stringify(data));
+    loadQ();
+}
+</script>
+
+</body>
+</html>
