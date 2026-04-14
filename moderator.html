@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script> 
+
 <title>Moderator - DSA 2026</title>
 
 <style>
@@ -133,40 +137,52 @@ p {
 </div>
 
 <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDVYsoLRzVrP67_7VJNcwyDuYHR6nfjROY",
+  authDomain: "dsa-qna-githni.firebaseapp.com",
+  databaseURL: "https://dsa-qna-githni-default-rtdb.firebaseio.com/",
+  projectId: "dsa-qna-githni",
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// LIVE LISTENER (REAL TIME)
+function loadQ(){
+
+    db.ref("questions").on("value", (snapshot) => {
+        let data = snapshot.val();
+        let html = "";
+
+        for(let id in data){
+            html += `
+            <div class="question-box">
+                <b>Name:</b> ${data[id].name}<br>
+                <b>Email:</b> ${data[id].email}<br>
+                <b>Phone:</b> ${data[id].phone}<br><br>
+                <b>Question:</b><br>
+                ${data[id].question}
+                <button onclick="del('${id}')">Delete</button>
+            </div>`;
+        }
+
+        document.getElementById("list").innerHTML = html;
+    });
+}
+
+// DELETE FUNCTION
+function del(id){
+    db.ref("questions/" + id).remove();
+}
+
+// LOGIN
 function login(){
     if(document.getElementById("pass").value === "123"){
-        document.getElementById("panel").style.display="block";
-        loadQ();
-        setInterval(loadQ, 2000); // 🔥 LIVE UPDATE FIX
+        document.getElementById("panel").style.display = "block";
+        loadQ(); // start live system
     } else {
         alert("Wrong password");
     }
-}
-
-function loadQ(){
-    let data = JSON.parse(localStorage.getItem("questions")) || [];
-    let html = "";
-
-    data.forEach((q,i)=>{
-        html += `
-        <div class="question-box">
-            <b>Name:</b> ${q.name}<br>
-            <b>Email:</b> ${q.email}<br>
-            <b>Phone:</b> ${q.phone}<br><br>
-            <b>Question:</b><br>
-            ${q.question}
-            <button onclick="del(${i})">Delete</button>
-        </div>`;
-    });
-
-    document.getElementById("list").innerHTML = html;
-}
-
-function del(i){
-    let data = JSON.parse(localStorage.getItem("questions"));
-    data.splice(i,1);
-    localStorage.setItem("questions", JSON.stringify(data));
-    loadQ();
 }
 </script>
 
