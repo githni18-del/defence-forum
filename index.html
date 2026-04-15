@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
 <title>DSA 2026 Q&A</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
@@ -117,6 +121,20 @@ button:hover {
 </div>
 
 <script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDVYsoLRzVrP67_7VJNcwyDuYHR6nfjROY",
+  authDomain: "dsa-qna-githni.firebaseapp.com",
+  databaseURL: "https://dsa-qna-githni-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "dsa-qna-githni",
+  storageBucket: "dsa-qna-githni.firebasestorage.app",
+  messagingSenderId: "852345859398",
+  appId: "1:852345859398:web:1ec1b1db15aa70e92d4947"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 function submitQ(){
 
     let nameVal = document.getElementById("name").value.trim();
@@ -158,17 +176,12 @@ function submitQ(){
 
     if(!valid) return;
 
-    let data = JSON.parse(localStorage.getItem("questions")) || [];
-
-    let q = {
-        name: nameVal,
-        email: emailVal,
-        phone: phoneVal,
-        question: questionVal
-    };
-
-    data.push(q);
-    localStorage.setItem("questions", JSON.stringify(data));
+    db.ref("questions").push({
+    name: nameVal,
+    email: emailVal,
+    phone: phoneVal,
+    question: questionVal
+});
 
     document.getElementById("name").value = "";
     document.getElementById("email").value = "";
